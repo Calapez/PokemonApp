@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PokemonsFragment extends Fragment {
+public class PokemonListFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = PokemonsFragment.class.getSimpleName();
+    private static final String TAG = PokemonListFragment.class.getSimpleName();
     private static final int PAGE_SIZE = 10;
 
     private MainActivity mActivity;
@@ -40,10 +40,10 @@ public class PokemonsFragment extends Fragment {
     private String nextEndpoint = String.format(Api.LIST_POKEMONS_LIMIT_ENDPOINT, PAGE_SIZE);
 
     /* Pokemon list */
-    private RecyclerView mRecyclerView;
+    private RecyclerView listPokemons;
     private LinearLayoutManager mLayoutManager;
     private PokemonAdapter mAdapter;
-    private List<Pokemon> mPokemonsList = new ArrayList<>(PAGE_SIZE);
+    private List<Pokemon> mPokemonDataset = new ArrayList<>(PAGE_SIZE);
 
     /* Scroll Listener for handling pagination with Recycler View */
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -74,16 +74,17 @@ public class PokemonsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View viewRoot = (View) inflater.inflate(R.layout.pokemons_fragment, container, false);
+        View viewRoot = (View) inflater.inflate(R.layout.pokemon_list_fragment, container, false);
 
         // Recycler View and Adapter
         mLayoutManager = new LinearLayoutManager(mActivity);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView = (RecyclerView) viewRoot.findViewById(R.id.pokemonsRecyclerView);
-        mAdapter = new PokemonAdapter(mActivity, mPokemonsList);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);// Pagination
-        mRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+        listPokemons = (RecyclerView) viewRoot.findViewById(R.id.recyclerPokemon);
+        mAdapter = new PokemonAdapter(mActivity, mPokemonDataset);
+        listPokemons.setLayoutManager(mLayoutManager);
+        listPokemons.setAdapter(mAdapter);
+        listPokemons.setOnClickListener(this);
+        listPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
 
         return viewRoot;
     }
@@ -99,6 +100,11 @@ public class PokemonsFragment extends Fragment {
         isLoading = true;
         TaskLoadPokemons task = new TaskLoadPokemons();
         task.execute();
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 
     class TaskLoadPokemons extends AsyncTask<Void, Void, Void> {
@@ -151,7 +157,7 @@ public class PokemonsFragment extends Fragment {
                         JSONObject jsonResult = jsonPokemons.getJSONObject(i);
 
                         // Add pokemon to list
-                        mPokemonsList.add(
+                        mPokemonDataset.add(
                                 new Pokemon(
                                         jsonResult.getString("name"),
                                         jsonResult.getString("url")

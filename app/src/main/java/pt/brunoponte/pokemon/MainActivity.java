@@ -15,10 +15,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            PokemonsFragment fragment = new PokemonsFragment();
-            transaction.replace(R.id.fragment_container, fragment);
-            transaction.commit();
+            openFragPokemonList();
         }
     }
+
+    public void openFragPokemonList() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        PokemonListFragment fragment = new PokemonListFragment();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+    }
+
+    public void openFragPokemonDetails(Pokemon pokemon) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("pokemonObject", pokemon);
+
+        PokemonDetailsFragment fragment = new PokemonDetailsFragment();
+        fragment.setArguments(bundle);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+    }
+
 }

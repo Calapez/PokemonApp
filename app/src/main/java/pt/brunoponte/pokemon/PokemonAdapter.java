@@ -29,7 +29,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
     private static final String TAG = PokemonAdapter.class.getSimpleName();
 
-    private Context context;
+    private MainActivity mActivity;
     private List<Pokemon> pokemonsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,8 +50,8 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         }
     }
 
-    public PokemonAdapter(Context context, List<Pokemon> pokemonsList) {
-        this.context = context;
+    public PokemonAdapter(Context mActivity, List<Pokemon> pokemonsList) {
+        this.mActivity = (MainActivity) mActivity;
         this.pokemonsList = pokemonsList;
     }
 
@@ -74,15 +74,22 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         // Set Pokemon photo in ImageView
         if (pokemon.getPhotoUrl().isEmpty()) {
             // Set photo as "loading" for now
-            viewHolder.getImgView().setImageDrawable(context.getDrawable(R.drawable.ic_loading));
+            viewHolder.getImgView().setImageDrawable(mActivity.getDrawable(R.drawable.ic_loading));
 
             // Fetch and set photo
-            new TaskGetPhoto(context, viewHolder.getImgView(), pokemon)
+            new TaskGetPhoto(mActivity, viewHolder.getImgView(), pokemon)
                     .execute();
         } else {
             // Set photo
             addPhotoToImageView(pokemon.getPhotoUrl(), viewHolder.getImgView());
         }
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.openFragPokemonDetails(pokemonsList.get(position));
+            }
+        });
     }
 
     @Override
