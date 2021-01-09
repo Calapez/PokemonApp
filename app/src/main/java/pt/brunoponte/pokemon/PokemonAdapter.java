@@ -70,6 +70,9 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         //viewHolder.getImgView().setImageDrawable(null);
 
         if (pokemon.getPhotoUrl().isEmpty()) {
+            // Set photo as "loading"
+            viewHolder.getImgView().setImageDrawable(context.getDrawable(R.drawable.ic_loading));
+
             // Fetch and add proper photo to image view
             new TaskGetPhoto(context, viewHolder.getImgView(), pokemon)  // Set photo
                     .execute();
