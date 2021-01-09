@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHolder> {
 
-    private static final String TAG = "PokemonAdapter";
+    private static final String TAG = PokemonAdapter.class.getSimpleName();
 
     private Context context;
     private List<Pokemon> pokemonsList;
@@ -66,20 +66,21 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
         Pokemon pokemon = pokemonsList.get(position);
 
-        // Set pokemon name
+        // Set Pokemon name in TextView
         viewHolder.getTextView().setText(
                 Util.capitalizeFirstLetter(pokemon.getName())
         );
 
+        // Set Pokemon photo in ImageView
         if (pokemon.getPhotoUrl().isEmpty()) {
-            // Set photo as "loading"
+            // Set photo as "loading" for now
             viewHolder.getImgView().setImageDrawable(context.getDrawable(R.drawable.ic_loading));
 
-            // Fetch and add proper photo to image view
-            new TaskGetPhoto(context, viewHolder.getImgView(), pokemon)  // Set photo
+            // Fetch and set photo
+            new TaskGetPhoto(context, viewHolder.getImgView(), pokemon)
                     .execute();
         } else {
-            // Add photo to image view
+            // Set photo
             addPhotoToImageView(pokemon.getPhotoUrl(), viewHolder.getImgView());
         }
     }
