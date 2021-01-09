@@ -178,7 +178,7 @@ public class PokemonDetailsFragment extends Fragment {
                                         i+1, formName)
                         );
                     }
-                    
+
                     // Loop through all held items
                     JSONArray jsonHeldItems = root.getJSONArray("held_items");
                     for (int i = 0; i < jsonHeldItems.length(); i++) {

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import pt.brunoponte.pokemon.util.Endpoints;
+
 public class PokemonListFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = PokemonListFragment.class.getSimpleName();
@@ -37,7 +39,7 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
     /* Pagination */
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private String nextEndpoint = String.format(Api.LIST_POKEMONS_LIMIT_ENDPOINT, PAGE_SIZE);
+    private String nextEndpoint = String.format(Endpoints.LIST_POKEMONS_LIMIT_ENDPOINT, PAGE_SIZE);
 
     /* Pokemon list */
     private RecyclerView listPokemons;
