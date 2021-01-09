@@ -66,8 +66,10 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
         Pokemon pokemon = pokemonsList.get(position);
 
-        viewHolder.getTextView().setText(pokemon.getName());  // Set name
-        //viewHolder.getImgView().setImageDrawable(null);
+        // Set pokemon name
+        viewHolder.getTextView().setText(
+                Util.capitalizeFirstLetter(pokemon.getName())
+        );
 
         if (pokemon.getPhotoUrl().isEmpty()) {
             // Set photo as "loading"
