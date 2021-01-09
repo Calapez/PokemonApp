@@ -107,22 +107,28 @@ public class PokemonsFragment extends Fragment {
 
             String message = "";
             if (resultCode == 200) { // Request succeeded
-                mPokemonsList.clear();
+
+                mPokemonsList.clear();  // Clear pokemon list
+
                 try {
-                    // Update Theme tags adapter
                     JSONObject root = new JSONObject(resultBody);
                     JSONArray jsonTags = root.getJSONArray("results");
+
+                    // Loop through all pokemons
                     for (int i = 0; i < jsonTags.length(); i++) {
                         JSONObject jsonResult = jsonTags.getJSONObject(i);
 
-                        String name = jsonResult.getString("name");
-                        String pokemonEndpoint = jsonResult.getString("url");
-
-                        Pokemon pokemon = new Pokemon(name, pokemonEndpoint);
-                        TaskGetPokemon taskGetPokemon = new TaskGetPokemon(pokemon);
-                        taskGetPokemon.execute();
+                        // Add pokemon to list
+                        mPokemonsList.add(
+                                new Pokemon(
+                                        jsonResult.getString("name"),
+                                        jsonResult.getString("url")
+                                )
+                        );
                     }
 
+                    mAdapter.notifyDataSetChanged();  // Refresh adapter
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.d(TAG, "Failed to parse JSON");
@@ -142,77 +148,5 @@ public class PokemonsFragment extends Fragment {
         }
     }
 
-    class TaskGetPokemon extends AsyncTask<Void, Void, Void> {
 
-        private Pokemon pokemon;
-        private int resultCode;
-        private String resultBody;
-
-        public TaskGetPokemon(Pokemon pokemon) {
-            this.pokemon = pokemon;
-            resultCode = -1;
-            resultBody = null;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            OkHttpClient httpClient = new OkHttpClient();
-            httpClient.setConnectTimeout(3000, TimeUnit.MILLISECONDS);
-            httpClient.setReadTimeout(3000, TimeUnit.MILLISECONDS);
-            httpClient.setWriteTimeout(3000, TimeUnit.MILLISECONDS);
-
-            Request request = new Request.Builder()
-                    .url(pokemon.getEndpoint())
-                    .addHeader("Content-type", "application/json")
-                    .build();
-
-            try {
-                Response response = httpClient.newCall(request).execute();
-                resultCode = response.code();
-                resultBody = response.body().string();
-            } catch (IOException e) {
-                resultCode = -1;
-                resultBody = null;
-                e.printStackTrace();
-            }
-
-            Log.d(TAG, String.format("Response - code: %d, body: %s", resultCode, resultBody));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            String message = "";
-            if (resultCode == 200) { // Request succeeded
-                try {
-                    // Update Theme tags adapter
-                    JSONObject root = new JSONObject(resultBody);
-
-                    pokemon.setPhotoUrl(
-                            root.getJSONObject("sprites").getString("front_default")
-                    );
-
-                    mPokemonsList.add(pokemon);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "Failed to parse JSON");
-                }
-            } else {
-                if (resultCode == 400) {
-                    message = "Error: Bad request";
-                } else if (resultCode == 500) {
-                    message = "Server Error";
-                } else {
-                    message = "Unexpected Error";
-                }
-            }
-
-            mAdapter.notifyDataSetChanged();
-
-            if (!message.isEmpty())
-                Toast.makeText(mActivity, message, Toast.LENGTH_LONG).show();
-        }
-    }
 }
