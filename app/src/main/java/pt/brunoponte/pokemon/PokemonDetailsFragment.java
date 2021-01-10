@@ -38,6 +38,8 @@ public class PokemonDetailsFragment extends Fragment {
 
     private static final String TAG = PokemonDetailsFragment.class.getSimpleName();
 
+    private static PokemonDetailsFragment singleton;
+
     private MainActivity mActivity;
 
     private ImageView imgPhoto;
@@ -49,6 +51,14 @@ public class PokemonDetailsFragment extends Fragment {
     private ListView listDescriptions;
     private ArrayAdapter<String> mAdapter;
     private List<String> mDescriptionDataset = new ArrayList<>();
+
+    public static PokemonDetailsFragment getInstance() {
+        if (singleton == null) {
+            singleton = new PokemonDetailsFragment();
+        }
+
+        return singleton;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openFragPokemonList() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        PokemonListFragment fragment = new PokemonListFragment();
-        transaction.replace(R.id.fragment_container, fragment);
+        transaction.replace(R.id.fragment_container, PokemonListFragment.getInstance());
         transaction.commit();
     }
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable("pokemonObject", pokemon);
 
-        PokemonDetailsFragment fragment = new PokemonDetailsFragment();
+        PokemonDetailsFragment fragment = PokemonDetailsFragment.getInstance();
         fragment.setArguments(bundle);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -34,6 +34,8 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
     private static final String TAG = PokemonListFragment.class.getSimpleName();
     private static final int PAGE_SIZE = 10;
 
+    private static PokemonListFragment singleton;
+
     private MainActivity mActivity;
 
     /* Pagination */
@@ -46,6 +48,14 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
     private LinearLayoutManager mLayoutManager;
     private PokemonAdapter mAdapter;
     private List<Pokemon> mPokemonDataset = new ArrayList<>(PAGE_SIZE);
+
+    public static PokemonListFragment getInstance() {
+        if (singleton == null) {
+            singleton = new PokemonListFragment();
+        }
+
+        return singleton;
+    }
 
     /* Scroll Listener for handling pagination with Recycler View */
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
