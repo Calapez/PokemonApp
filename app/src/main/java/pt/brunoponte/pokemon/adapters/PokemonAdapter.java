@@ -27,15 +27,15 @@ import java.util.concurrent.TimeUnit;
 
 import pt.brunoponte.pokemon.MainActivity;
 import pt.brunoponte.pokemon.R;
+import pt.brunoponte.pokemon.models.SimplePokemonModel;
 import pt.brunoponte.pokemon.util.GeneralMethods;
-import pt.brunoponte.pokemon.models.PokemonModel;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHolder> {
 
     private static final String TAG = PokemonAdapter.class.getSimpleName();
 
     private MainActivity mActivity;
-    private List<PokemonModel> pokemonsList;
+    private List<SimplePokemonModel> pokemonsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
@@ -55,7 +55,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         }
     }
 
-    public PokemonAdapter(Context mActivity, List<PokemonModel> pokemonsList) {
+    public PokemonAdapter(Context mActivity, List<SimplePokemonModel> pokemonsList) {
         this.mActivity = (MainActivity) mActivity;
         this.pokemonsList = pokemonsList;
     }
@@ -69,7 +69,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
-        PokemonModel pokemon = pokemonsList.get(position);
+        SimplePokemonModel pokemon = pokemonsList.get(position);
 
         // Set Pokemon name in TextView
         viewHolder.getTextView().setText(
@@ -108,7 +108,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         return pokemonsList.size();
     }
 
-    public void setPokemonsList(List<PokemonModel> pokemonsList) {
+    public void setPokemonsList(List<SimplePokemonModel> pokemonsList) {
         this.pokemonsList = pokemonsList;
         notifyDataSetChanged();
     }
@@ -124,11 +124,11 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
         private Context context;
         private ImageView imgView;
-        private PokemonModel pokemon;
+        private SimplePokemonModel pokemon;
         private int resultCode;
         private String resultBody;
 
-        public TaskGetPhoto(Context context, ImageView imgView, PokemonModel pokemon) {
+        public TaskGetPhoto(Context context, ImageView imgView, SimplePokemonModel pokemon) {
             this.context = context;
             this.imgView = imgView;
             this.pokemon = pokemon;

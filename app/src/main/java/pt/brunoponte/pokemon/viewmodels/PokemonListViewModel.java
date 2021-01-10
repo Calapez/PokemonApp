@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.brunoponte.pokemon.models.PokemonModel;
 import pt.brunoponte.pokemon.models.PokemonsWrapper;
+import pt.brunoponte.pokemon.models.SimplePokemonModel;
 import pt.brunoponte.pokemon.network.ApiService;
 import pt.brunoponte.pokemon.network.RetrofitInstance;
 import retrofit2.Call;
@@ -23,7 +23,7 @@ public class PokemonListViewModel extends ViewModel {
 
     private int mNextOffset;
 
-    private MutableLiveData<List<PokemonModel>> mPokemons = new MutableLiveData<>();
+    private MutableLiveData<List<SimplePokemonModel>> mPokemons = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsLastPage = new MutableLiveData<>();
 
@@ -47,7 +47,7 @@ public class PokemonListViewModel extends ViewModel {
 
                 mNextOffset = getNextOffsetFromUrl(wrapper.getNextUrl());  // Set next offset
 
-                List<PokemonModel> pokemons = mPokemons.getValue();
+                List<SimplePokemonModel> pokemons = mPokemons.getValue();
                 pokemons.addAll(response.body().getPokemons());
                 mPokemons.postValue(pokemons);  // Add new pokemons to list
             }
@@ -58,7 +58,7 @@ public class PokemonListViewModel extends ViewModel {
                 Log.d(TAG, "fetchMorePokemons() failed");
                 Log.d(TAG, t.getMessage());
 
-                List<PokemonModel> pokemons = mPokemons.getValue();
+                List<SimplePokemonModel> pokemons = mPokemons.getValue();
                 pokemons.clear();
                 mPokemons.postValue(pokemons);
             }
@@ -79,7 +79,7 @@ public class PokemonListViewModel extends ViewModel {
         return mIsLastPage;
     }
 
-    public MutableLiveData<List<PokemonModel>> getPokemons() {
+    public MutableLiveData<List<SimplePokemonModel>> getPokemons() {
         return mPokemons;
     }
 

@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import pt.brunoponte.pokemon.models.PokemonModel;
+import pt.brunoponte.pokemon.models.SimplePokemonModel;
 import pt.brunoponte.pokemon.util.GeneralMethods;
 
 public class PokemonDetailsFragment extends Fragment {
@@ -46,7 +47,7 @@ public class PokemonDetailsFragment extends Fragment {
     private ImageView imgPhoto;
     private TextView textName;
 
-    private PokemonModel mPokemon;
+    private SimplePokemonModel mPokemon;
 
     /* Description list */
     private ListView listDescriptions;

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import pt.brunoponte.pokemon.models.PokemonModel;
+import pt.brunoponte.pokemon.models.SimplePokemonModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openFragPokemonDetails(PokemonModel pokemon) {
+    public void openFragPokemonDetails(SimplePokemonModel pokemon) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("pokemonObject", pokemon);
 

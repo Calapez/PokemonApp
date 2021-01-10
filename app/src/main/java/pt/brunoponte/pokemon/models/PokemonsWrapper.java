@@ -9,12 +9,12 @@ public class PokemonsWrapper {
 
     @SerializedName("results")
     @Expose
-    private List<PokemonModel> pokemons;
+    private List<SimplePokemonModel> pokemons;
     @SerializedName("next")
     @Expose
     private String nextUrl;
 
-    public List<PokemonModel> getPokemons() {
+    public List<SimplePokemonModel> getPokemons() {
         return pokemons;
     }
 
