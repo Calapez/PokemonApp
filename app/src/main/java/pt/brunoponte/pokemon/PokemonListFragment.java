@@ -20,7 +20,7 @@ public class PokemonListFragment extends Fragment {
 
     private static final String TAG = PokemonListFragment.class.getSimpleName();
 
-    private static PokemonListFragment singleton;
+    private static PokemonListFragment instance;
 
     private MainActivity mActivity;
     private PokemonListViewModel mPokemonListViewModel;
@@ -34,11 +34,11 @@ public class PokemonListFragment extends Fragment {
     private PokemonAdapter mAdapter;
 
     public static PokemonListFragment getInstance() {
-        if (singleton == null) {
-            singleton = new PokemonListFragment();
+        if (instance == null) {
+            instance = new PokemonListFragment();
         }
 
-        return singleton;
+        return instance;
     }
 
     private PokemonListFragment() {}

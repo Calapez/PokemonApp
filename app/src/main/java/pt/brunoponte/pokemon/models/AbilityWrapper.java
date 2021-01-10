@@ -9,7 +9,7 @@ public class AbilityWrapper {
     @Expose
     private AbilityModel ability;
 
-    public AbilityModel getMove() {
+    public AbilityModel getAbility() {
         return ability;
     }
 
