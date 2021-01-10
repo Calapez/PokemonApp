@@ -15,7 +15,7 @@ public interface ApiService {
     Call<PokemonsWrapper> listPokemons(@Query("offset") int offset, @Query("limit") int pageSize);
 
     @GET("pokemon/{name}")
-    Call<List<PokemonModel>> showPokemon(@Path("name") String name);
+    Call<PokemonModel> showPokemon(@Path("name") String name);
 
 }
 

@@ -76,7 +76,15 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
                 GeneralMethods.capitalizeFirstLetter(pokemon.getName())
         );
 
-        /* FIXME: For now don't add photo
+        Log.d(TAG, pokemon.getPhotoUrl());
+        if (pokemon.getPhotoUrl() == null || pokemon.getPhotoUrl().isEmpty()) {
+            viewHolder.getImgView().setImageDrawable(mActivity.getDrawable(R.drawable.ic_loading));
+        } else {
+            Log.d(TAG, pokemon.getPhotoUrl());
+            addPhotoToImageView(pokemon.getPhotoUrl(), viewHolder.getImgView());
+        }
+
+        /* TODO: Delete Old
         // Set Pokemon photo in ImageView
         if (pokemon.getPhotoUrl().isEmpty()) {
             // Set photo as "loading" for now

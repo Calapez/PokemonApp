@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.brunoponte.pokemon.models.PokemonModel;
 import pt.brunoponte.pokemon.models.PokemonsWrapper;
 import pt.brunoponte.pokemon.models.SimplePokemonModel;
 import pt.brunoponte.pokemon.network.ApiService;
@@ -35,9 +36,11 @@ public class PokemonListViewModel extends ViewModel {
     }
 
     public void fetchMorePokemons() {
+        List<SimplePokemonModel> pokemons = mPokemons.getValue();
+
         ApiService apiService = RetrofitInstance.getInstance().create(ApiService.class);
-        Call<PokemonsWrapper> call = apiService.listPokemons(mNextOffset, PAGE_SIZE);
-        call.enqueue(new Callback<PokemonsWrapper>() {
+        Call<PokemonsWrapper> listPokemonsCall = apiService.listPokemons(mNextOffset, PAGE_SIZE);
+        listPokemonsCall.enqueue(new Callback<PokemonsWrapper>() {
             @Override
             public void onResponse(Call<PokemonsWrapper> call, Response<PokemonsWrapper> response) {
                 Log.d(TAG, "fetchMorePokemons() success");
@@ -47,15 +50,50 @@ public class PokemonListViewModel extends ViewModel {
 
                 mNextOffset = getNextOffsetFromUrl(wrapper.getNextUrl());  // Set next offset
 
-                List<SimplePokemonModel> pokemons = mPokemons.getValue();
-                pokemons.addAll(response.body().getPokemons());
-                mPokemons.postValue(pokemons);  // Add new pokemons to list
+                final int[] photosCounter = {0};
+                for (SimplePokemonModel pokemon : wrapper.getPokemons()) {
+                    pokemons.add(pokemon);
+
+                    /* Sync request */
+                    /*
+                    try {
+                        pokemon.setPhotoUrl(
+                                showPokemonCall.execute().body().getSprites().getFrontUrl()
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+
+                    /* Async request */
+                    Log.d(TAG, "showPokemon("+pokemon.getName()+")");
+                    ApiService apiService2 = RetrofitInstance.getInstance().create(ApiService.class);
+                    Call<PokemonModel> showPokemonCall = apiService2.showPokemon(pokemon.getName());
+                    showPokemonCall.enqueue(new Callback<PokemonModel>() {
+                        @Override
+                        public void onResponse(Call<PokemonModel> call, Response<PokemonModel> response) {
+                            photosCounter[0]++;
+                            pokemon.setPhotoUrl(response.body().getSprites().getFrontUrl());
+
+                            // Last photo, finish list
+                            if (photosCounter[0] == wrapper.getPokemons().size())
+                                mPokemons.postValue(pokemons);
+                        }
+
+                        @Override
+                        public void onFailure(Call<PokemonModel> call, Throwable t) {
+                            t.printStackTrace();
+                            Log.d(TAG, t.getMessage());
+                            Log.d(TAG, "onFailure() showPokemonCall");
+                        }
+                    });
+                }
+
             }
 
             @Override
             public void onFailure(Call<PokemonsWrapper> call, Throwable t) {
                 t.printStackTrace();
-                Log.d(TAG, "fetchMorePokemons() failed");
+                Log.d(TAG, "onFailure() listPokemons");
                 Log.d(TAG, t.getMessage());
 
                 List<SimplePokemonModel> pokemons = mPokemons.getValue();

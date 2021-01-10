@@ -57,7 +57,7 @@ public class SimplePokemonModel implements Parcelable {
     }
 
     public String getPhotoUrl() {
-        return url;
+        return photoUrl;
     }
 
     public void setPhotoUrl(String url) {
