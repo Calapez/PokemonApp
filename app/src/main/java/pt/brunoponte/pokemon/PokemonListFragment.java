@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,9 @@ public class PokemonListFragment extends Fragment {
 
     private MainActivity mActivity;
     private PokemonListViewModel mPokemonListViewModel;
+
+    /* Progress Bar*/
+    private ProgressBar progressBar;
 
     /* Pokemon list */
     private RecyclerView listPokemons;
@@ -73,6 +77,9 @@ public class PokemonListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View viewRoot = (View) inflater.inflate(R.layout.pokemon_list_fragment, container, false);
 
+        /* Progress bar */
+        progressBar = (ProgressBar) viewRoot.findViewById(R.id.progressBar);
+
         /* Recycler View */
         // Set adapter value
         mAdapter = new PokemonAdapter(mActivity, mPokemonListViewModel.getPokemons().getValue());
@@ -86,8 +93,11 @@ public class PokemonListFragment extends Fragment {
         listPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
 
         mPokemonListViewModel.getPokemons().observe(this, pokemons ->
-                //mAdapter.notifyDataSetChanged()//;
-                mAdapter.setPokemonsList(pokemons)
+                mAdapter.notifyDataSetChanged()
+        );
+
+        mPokemonListViewModel.getIsLoading().observe(this, isLoading ->
+                progressBar.setVisibility( isLoading ? View.VISIBLE : View.INVISIBLE )
         );
 
         mPokemonListViewModel.fetchMorePokemons();

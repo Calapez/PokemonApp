@@ -36,7 +36,9 @@ public class PokemonListViewModel extends ViewModel {
     }
 
     public void fetchMorePokemons() {
-        List<SimplePokemonModel> pokemons = mPokemons.getValue();
+        mIsLoading.setValue(true);
+
+        List<SimplePokemonModel> tempPokemons = mPokemons.getValue();
 
         ApiService apiService = RetrofitInstance.getInstance().create(ApiService.class);
         Call<PokemonsWrapper> listPokemonsCall = apiService.listPokemons(mNextOffset, PAGE_SIZE);
@@ -48,21 +50,14 @@ public class PokemonListViewModel extends ViewModel {
 
                 PokemonsWrapper wrapper = response.body();
 
+                if (wrapper.getPokemons().size() < PAGE_SIZE)
+                    mIsLastPage.setValue(true);
+
                 mNextOffset = getNextOffsetFromUrl(wrapper.getNextUrl());  // Set next offset
 
                 final int[] photosCounter = {0};
                 for (SimplePokemonModel pokemon : wrapper.getPokemons()) {
-                    pokemons.add(pokemon);
-
-                    /* Sync request */
-                    /*
-                    try {
-                        pokemon.setPhotoUrl(
-                                showPokemonCall.execute().body().getSprites().getFrontUrl()
-                        );
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
+                    tempPokemons.add(pokemon);
 
                     /* Async request */
                     Log.d(TAG, "showPokemon("+pokemon.getName()+")");
@@ -75,8 +70,10 @@ public class PokemonListViewModel extends ViewModel {
                             pokemon.setPhotoUrl(response.body().getSprites().getFrontUrl());
 
                             // Last photo, finish list
-                            if (photosCounter[0] == wrapper.getPokemons().size())
-                                mPokemons.postValue(pokemons);
+                            if (photosCounter[0] == wrapper.getPokemons().size()) {
+                                mIsLoading.setValue(false);
+                                mPokemons.postValue(tempPokemons);
+                            }
                         }
 
                         @Override
