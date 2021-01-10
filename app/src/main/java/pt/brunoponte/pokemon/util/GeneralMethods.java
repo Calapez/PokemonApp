@@ -1,6 +1,6 @@
-package pt.brunoponte.pokemon;
+package pt.brunoponte.pokemon.util;
 
-public class Util {
+public class GeneralMethods {
 
     public static String capitalizeFirstLetter(String str) {
         if (str.isEmpty())

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import pt.brunoponte.pokemon.models.PokemonModel;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openFragPokemonDetails(Pokemon pokemon) {
+    public void openFragPokemonDetails(PokemonModel pokemon) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("pokemonObject", pokemon);
 

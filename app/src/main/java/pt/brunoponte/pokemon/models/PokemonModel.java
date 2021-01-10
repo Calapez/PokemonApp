@@ -1,4 +1,4 @@
-package pt.brunoponte.pokemon;
+package pt.brunoponte.pokemon.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,6 +13,12 @@ public class Pokemon implements Parcelable {
         this.name = name;
         this.endpoint = endpoint;
         this.photoUrl = "";
+    }
+
+    public Pokemon(String name, String endpoint, String photoUrl)  {
+        this.name = name;
+        this.endpoint = endpoint;
+        this.photoUrl = photoUrl;
     }
 
     public Pokemon(Parcel in) {

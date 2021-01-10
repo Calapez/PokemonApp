@@ -1,53 +1,33 @@
 package pt.brunoponte.pokemon;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import pt.brunoponte.pokemon.adapters.PokemonAdapter;
+import pt.brunoponte.pokemon.viewmodels.PokemonListViewModel;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import pt.brunoponte.pokemon.util.Endpoints;
-
-public class PokemonListFragment extends Fragment implements View.OnClickListener {
+public class PokemonListFragment extends Fragment {
 
     private static final String TAG = PokemonListFragment.class.getSimpleName();
-    private static final int PAGE_SIZE = 10;
 
     private static PokemonListFragment singleton;
 
     private MainActivity mActivity;
-
-    /* Pagination */
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
-    private String nextEndpoint = String.format(Endpoints.LIST_POKEMONS_LIMIT_ENDPOINT, PAGE_SIZE);
+    private PokemonListViewModel mPokemonListViewModel;
 
     /* Pokemon list */
     private RecyclerView listPokemons;
     private LinearLayoutManager mLayoutManager;
     private PokemonAdapter mAdapter;
-    private List<Pokemon> mPokemonDataset = new ArrayList<>(PAGE_SIZE);
 
     public static PokemonListFragment getInstance() {
         if (singleton == null) {
@@ -56,6 +36,8 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
 
         return singleton;
     }
+
+    private PokemonListFragment() {}
 
     /* Scroll Listener for handling pagination with Recycler View */
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -66,12 +48,12 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
-            if (!isLoading && !isLastPage) {
+            if (!mPokemonListViewModel.getIsLoading().getValue() && !mPokemonListViewModel.getIsLastPage().getValue()) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
-                        && totalItemCount >= PAGE_SIZE) {
+                        && totalItemCount >= PokemonListViewModel.PAGE_SIZE) {
                     // Load new page of pokemons
-                    loadMorePokemons();
+                    mPokemonListViewModel.fetchMorePokemons();
                 }
             }
         }
@@ -80,7 +62,10 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mActivity = (MainActivity) getActivity();
+        mPokemonListViewModel = ViewModelProviders.of(this).get(PokemonListViewModel.class);
+        mPokemonListViewModel.init();
     }
 
     @Nullable
@@ -88,117 +73,25 @@ public class PokemonListFragment extends Fragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View viewRoot = (View) inflater.inflate(R.layout.pokemon_list_fragment, container, false);
 
-        // Recycler View and Adapter
+        /* Recycler View */
+        // Set adapter value
+        mAdapter = new PokemonAdapter(mActivity, mPokemonListViewModel.getPokemons().getValue());
+        // Set layout manager
         mLayoutManager = new LinearLayoutManager(mActivity);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        // Set recycler view
         listPokemons = (RecyclerView) viewRoot.findViewById(R.id.recyclerPokemon);
-        mAdapter = new PokemonAdapter(mActivity, mPokemonDataset);
         listPokemons.setLayoutManager(mLayoutManager);
         listPokemons.setAdapter(mAdapter);
-        listPokemons.setOnClickListener(this);
         listPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
+
+        mPokemonListViewModel.getPokemons().observe(this, pokemons ->
+                //mAdapter.notifyDataSetChanged()//;
+                mAdapter.setPokemonsList(pokemons)
+        );
+
+        mPokemonListViewModel.fetchMorePokemons();
 
         return viewRoot;
     }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        loadMorePokemons();
-    }
-
-    private void loadMorePokemons() {
-        isLoading = true;
-        TaskLoadPokemons task = new TaskLoadPokemons();
-        task.execute();
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    class TaskLoadPokemons extends AsyncTask<Void, Void, Void> {
-
-        private int resultCode = -1;
-        private String resultBody = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            OkHttpClient httpClient = new OkHttpClient();
-            httpClient.setConnectTimeout(3000, TimeUnit.MILLISECONDS);
-            httpClient.setReadTimeout(3000, TimeUnit.MILLISECONDS);
-            httpClient.setWriteTimeout(3000, TimeUnit.MILLISECONDS);
-
-            Request request = new Request.Builder()
-                    .url(nextEndpoint)
-                    .addHeader("Content-type", "application/json")
-                    .build();
-
-            try {
-                Response response = httpClient.newCall(request).execute();
-                resultCode = response.code();
-                resultBody = response.body().string();
-            } catch (IOException e) {
-                resultCode = -1;
-                resultBody = null;
-                e.printStackTrace();
-            }
-
-            Log.d(TAG, String.format("Response - code: %d, body: %s", resultCode, resultBody));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            String message = "";
-            if (resultCode == 200) { // Request succeeded
-                try {
-                    JSONObject root = new JSONObject(resultBody);
-                    nextEndpoint = root.getString("next");
-                    JSONArray jsonPokemons = root.getJSONArray("results");
-
-                    if (jsonPokemons.length() < PAGE_SIZE)
-                        isLastPage = true;
-
-                    // Loop through all pokemons
-                    for (int i = 0; i < jsonPokemons.length(); i++) {
-                        JSONObject jsonResult = jsonPokemons.getJSONObject(i);
-
-                        // Add pokemon to list
-                        mPokemonDataset.add(
-                                new Pokemon(
-                                        jsonResult.getString("name"),
-                                        jsonResult.getString("url")
-                                )
-                        );
-                    }
-
-                    mAdapter.notifyDataSetChanged();  // Refresh adapter
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "Failed to parse JSON");
-                }
-            } else {
-                if (resultCode == 400) {
-                    message = "Error: Bad request";
-                } else if (resultCode == 500) {
-                    message = "Server Error";
-                } else {
-                    message = "Unexpected Error";
-                }
-            }
-
-            isLoading = false;
-
-            if (!message.isEmpty())
-                Toast.makeText(mActivity, message, Toast.LENGTH_LONG).show();
-        }
-    }
-
-
 }

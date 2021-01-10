@@ -25,12 +25,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import pt.brunoponte.pokemon.models.PokemonModel;
+
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHolder> {
 
     private static final String TAG = PokemonAdapter.class.getSimpleName();
 
     private MainActivity mActivity;
-    private List<Pokemon> pokemonsList;
+    private List<PokemonModel> pokemonsList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
@@ -50,7 +52,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
         }
     }
 
-    public PokemonAdapter(Context mActivity, List<Pokemon> pokemonsList) {
+    public PokemonAdapter(Context mActivity, List<PokemonModel> pokemonsList) {
         this.mActivity = (MainActivity) mActivity;
         this.pokemonsList = pokemonsList;
     }
@@ -64,13 +66,14 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
-        Pokemon pokemon = pokemonsList.get(position);
+        PokemonModel pokemon = pokemonsList.get(position);
 
         // Set Pokemon name in TextView
         viewHolder.getTextView().setText(
                 Util.capitalizeFirstLetter(pokemon.getName())
         );
 
+        /* FIXME: For now don't add photo
         // Set Pokemon photo in ImageView
         if (pokemon.getPhotoUrl().isEmpty()) {
             // Set photo as "loading" for now
@@ -83,6 +86,8 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
             // Set photo
             addPhotoToImageView(pokemon.getPhotoUrl(), viewHolder.getImgView());
         }
+
+         */
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +103,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
     }
 
     private void addPhotoToImageView(String url, ImageView imgView) {
+        Log.d(TAG, url + " ||||||||");
         Picasso.get()
             .load(url)
             .resize(300, 300)
@@ -108,11 +114,11 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
         private Context context;
         private ImageView imgView;
-        private Pokemon pokemon;
+        private PokemonModel pokemon;
         private int resultCode;
         private String resultBody;
 
-        public TaskGetPhoto(Context context, ImageView imgView, Pokemon pokemon) {
+        public TaskGetPhoto(Context context, ImageView imgView, PokemonModel pokemon) {
             this.context = context;
             this.imgView = imgView;
             this.pokemon = pokemon;

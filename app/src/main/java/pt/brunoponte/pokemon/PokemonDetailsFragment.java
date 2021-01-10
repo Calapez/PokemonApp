@@ -16,8 +16,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -34,6 +32,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import pt.brunoponte.pokemon.models.PokemonModel;
+import pt.brunoponte.pokemon.util.GeneralMethods;
+
 public class PokemonDetailsFragment extends Fragment {
 
     private static final String TAG = PokemonDetailsFragment.class.getSimpleName();
@@ -45,7 +46,7 @@ public class PokemonDetailsFragment extends Fragment {
     private ImageView imgPhoto;
     private TextView textName;
 
-    private Pokemon mPokemon;
+    private PokemonModel mPokemon;
 
     /* Description list */
     private ListView listDescriptions;
@@ -59,6 +60,8 @@ public class PokemonDetailsFragment extends Fragment {
 
         return singleton;
     }
+
+    private PokemonDetailsFragment() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class PokemonDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        textName.setText(Util.capitalizeFirstLetter(mPokemon.getName()));
+        textName.setText(GeneralMethods.capitalizeFirstLetter(mPokemon.getName()));
         Picasso.get()
                 .load(mPokemon.getPhotoUrl())
                 .resize(300, 300)
@@ -127,7 +130,7 @@ public class PokemonDetailsFragment extends Fragment {
             httpClient.setWriteTimeout(3000, TimeUnit.MILLISECONDS);
 
             Request request = new Request.Builder()
-                    .url(mPokemon.getEndpoint())
+                    .url(mPokemon.getUrl())
                     .addHeader("Content-type", "application/json")
                     .build();
 
