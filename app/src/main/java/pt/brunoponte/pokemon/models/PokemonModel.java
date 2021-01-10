@@ -3,27 +3,34 @@ package pt.brunoponte.pokemon.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Pokemon implements Parcelable {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
+public class PokemonModel implements Parcelable {
+
+    @SerializedName("name")
+    @Expose
     private String name;
-    private String endpoint;
+    @SerializedName("url")
+    @Expose
+    private String url;
     private String photoUrl;
 
-    public Pokemon(String name, String endpoint)  {
+    public PokemonModel(String name, String url)  {
         this.name = name;
-        this.endpoint = endpoint;
+        this.url = url;
         this.photoUrl = "";
     }
 
-    public Pokemon(String name, String endpoint, String photoUrl)  {
+    public PokemonModel(String name, String url, String photoUrl)  {
         this.name = name;
-        this.endpoint = endpoint;
+        this.url = url;
         this.photoUrl = photoUrl;
     }
 
-    public Pokemon(Parcel in) {
+    public PokemonModel(Parcel in) {
         name = in.readString();
-        endpoint = in.readString();
+        url = in.readString();
         photoUrl = in.readString();
     }
 
@@ -35,27 +42,27 @@ public class Pokemon implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(endpoint);
+        dest.writeString(url);
         dest.writeString(photoUrl);
     }
 
-    public static final Creator<Pokemon> CREATOR = new Creator<Pokemon>() {
+    public static final Creator<PokemonModel> CREATOR = new Creator<PokemonModel>() {
         @Override
-        public Pokemon createFromParcel(Parcel in) {
-            return new Pokemon(in);
+        public PokemonModel createFromParcel(Parcel in) {
+            return new PokemonModel(in);
         }
 
         @Override
-        public Pokemon[] newArray(int size) {
-            return new Pokemon[size];
+        public PokemonModel[] newArray(int size) {
+            return new PokemonModel[size];
         }
     };
 
     public String getName() {
         return name;
     }
-    public String getEndpoint() {
-        return endpoint;
+    public String getUrl() {
+        return url;
     }
 
     public String getPhotoUrl() {

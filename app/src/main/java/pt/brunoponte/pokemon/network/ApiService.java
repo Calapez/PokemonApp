@@ -1,23 +1,21 @@
 package pt.brunoponte.pokemon.network;
 
-import pt.brunoponte.pokemon.util.Endpoints;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.util.List;
 
-public class Service {
+import pt.brunoponte.pokemon.models.PokemonModel;
+import pt.brunoponte.pokemon.models.PokemonsWrapper;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
-    private static Retrofit.Builder retrofitBuilder
-            = new Retrofit.Builder()
-            .baseUrl(Endpoints.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create());
+public interface ApiService {
 
-    private static Retrofit retrofit;
+    @GET("pokemon")
+    Call<PokemonsWrapper> listPokemons(@Query("offset") int offset, @Query("limit") int pageSize);
 
-    public Retrofit getInstance() {
-        if (retrofit == null) {
-            retrofit = retrofitBuilder.build();
-        }
-        return retrofit;
-    }
+    @GET("pokemon/{name}")
+    Call<List<PokemonModel>> showPokemon(@Path("name") String name);
 
 }
+

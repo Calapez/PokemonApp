@@ -1,9 +1,7 @@
-package pt.brunoponte.pokemon.util;
+package pt.brunoponte.pokemon.network;
 
-public class Endpoints {
+class Endpoints {
 
-    public static String BASE_URL = "https://pokeapi.co/api/v2/";
-    public static String LIST_POKEMONS_ENDPOINT = "https://pokeapi.co/api/v2/pokemon";
-    public static String LIST_POKEMONS_LIMIT_URL = "https://pokeapi.co/api/v2/pokemon?limit=%d";
+    static String BASE_URL = "https://pokeapi.co/api/v2/";
 
 }

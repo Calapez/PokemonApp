@@ -1,4 +1,4 @@
-package pt.brunoponte.pokemon;
+package pt.brunoponte.pokemon.adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import pt.brunoponte.pokemon.MainActivity;
+import pt.brunoponte.pokemon.R;
+import pt.brunoponte.pokemon.util.GeneralMethods;
 import pt.brunoponte.pokemon.models.PokemonModel;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHolder> {
@@ -70,7 +73,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
         // Set Pokemon name in TextView
         viewHolder.getTextView().setText(
-                Util.capitalizeFirstLetter(pokemon.getName())
+                GeneralMethods.capitalizeFirstLetter(pokemon.getName())
         );
 
         /* FIXME: For now don't add photo
@@ -99,11 +102,18 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
 
     @Override
     public int getItemCount() {
+        if (pokemonsList == null)
+            return 0;
+
         return pokemonsList.size();
     }
 
+    public void setPokemonsList(List<PokemonModel> pokemonsList) {
+        this.pokemonsList = pokemonsList;
+        notifyDataSetChanged();
+    }
+
     private void addPhotoToImageView(String url, ImageView imgView) {
-        Log.d(TAG, url + " ||||||||");
         Picasso.get()
             .load(url)
             .resize(300, 300)
@@ -134,7 +144,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
             httpClient.setWriteTimeout(3000, TimeUnit.MILLISECONDS);
 
             Request request = new Request.Builder()
-                    .url(pokemon.getEndpoint())
+                    .url(pokemon.getUrl())
                     .addHeader("Content-type", "application/json")
                     .build();
 

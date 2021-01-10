@@ -1,10 +1,9 @@
 package pt.brunoponte.pokemon.network;
 
-import pt.brunoponte.pokemon.util.Endpoints;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Service {
+public class RetrofitInstance {
 
     private static Retrofit.Builder retrofitBuilder
             = new Retrofit.Builder()
@@ -13,7 +12,7 @@ public class Service {
 
     private static Retrofit retrofit;
 
-    public Retrofit getInstance() {
+    public static Retrofit getInstance() {
         if (retrofit == null) {
             retrofit = retrofitBuilder.build();
         }
