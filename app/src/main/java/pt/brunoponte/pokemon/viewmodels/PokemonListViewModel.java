@@ -1,6 +1,7 @@
 package pt.brunoponte.pokemon.viewmodels;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
@@ -14,12 +15,14 @@ public class PokemonListViewModel extends ViewModel {
     public static final int PAGE_SIZE = 7;
 
     private PokemonRepository mRepository;
-    private LiveData<List<SimplePokemonModel>> mSimplePokemons;
+    private MutableLiveData<List<SimplePokemonModel>> mSimplePokemons;
+    private MutableLiveData<Boolean> mIsFetching;
 
     public void init() {
         mRepository = PokemonRepository.getInstance();
         mRepository.init();
         mSimplePokemons = mRepository.getSimplePokemons();
+        mIsFetching = mRepository.getIsFetching();
     }
 
     public void fetchMorePokemons() {
@@ -34,7 +37,7 @@ public class PokemonListViewModel extends ViewModel {
     }
 
     public LiveData<Boolean> getIsFetching() {
-        return mRepository.getIsFetching();
+        return mIsFetching;
     }
 
     public LiveData<List<SimplePokemonModel>> getSimplePokemons() {

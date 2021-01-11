@@ -77,9 +77,11 @@ public class PokemonDetailsFragment extends Fragment {
         mPokemonDetailsViewModel = ViewModelProviders.of(this).get(PokemonDetailsViewModel.class);
 
         Bundle bundle = getArguments();
-        if (bundle != null) {
-            mPokemonDetailsViewModel.init(bundle.getParcelable("pokemonObject"));
+        if (bundle == null) {
+            return;
         }
+
+        mPokemonDetailsViewModel.init(bundle.getParcelable("pokemonObject"));
 
         // Handle back press
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {

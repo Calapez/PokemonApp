@@ -2,6 +2,8 @@ package pt.brunoponte.pokemon.viewmodels;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,16 +20,12 @@ public class PokemonDetailsViewModel extends ViewModel {
     private static final String TAG = PokemonDetailsViewModel.class.getSimpleName();
 
     private MutableLiveData<PokemonModel> mPokemon = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
     public void init(SimplePokemonModel simplePokemon) {
-        mIsLoading.setValue(false);
         fetchPokemon(simplePokemon.getName());
     }
 
     public void fetchPokemon(String name) {
-        mIsLoading.setValue(true);
-
         ApiService apiService = RetrofitInstance.getInstance().create(ApiService.class);
         Call<PokemonModel> showPokemonsCall = apiService.showPokemon(name);
         showPokemonsCall.enqueue(new Callback<PokemonModel>() {
@@ -37,30 +35,21 @@ public class PokemonDetailsViewModel extends ViewModel {
                 Log.d(TAG, response.message());
 
                 mPokemon.setValue(response.body());
-                mIsLoading.setValue(false);
 
             }
 
             @Override
-            public void onFailure(Call<PokemonModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<PokemonModel> call, @NonNull Throwable t) {
                 t.printStackTrace();
                 Log.d(TAG, "onFailure() listPokemons");
-                Log.d(TAG, t.getMessage());
 
                 mPokemon.setValue(null);
-                mIsLoading.setValue(false);
             }
         });
     }
 
-    public MutableLiveData<PokemonModel> getPokemon() {
+    public LiveData<PokemonModel> getPokemon() {
         return mPokemon;
     }
-
-    public MutableLiveData<Boolean> getIsLoading() {
-        return mIsLoading;
-    }
-
-
 
 }

@@ -45,15 +45,15 @@ public class PokemonRepository {
         mIsFetching.setValue(false);
     }
 
-    public LiveData<List<SimplePokemonModel>> getSimplePokemons() {
+    public MutableLiveData<List<SimplePokemonModel>> getSimplePokemons() {
         return mSimplePokemons;
     }
 
-    public LiveData<List<PokemonModel>> getPokemons() {
+    public MutableLiveData<List<PokemonModel>> getPokemons() {
         return mPokemons;
     }
 
-    public LiveData<Boolean> getIsFetching() {
+    public MutableLiveData<Boolean> getIsFetching() {
         return mIsFetching;
     }
 
