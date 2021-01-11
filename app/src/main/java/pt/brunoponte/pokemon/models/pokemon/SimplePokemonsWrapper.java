@@ -8,26 +8,18 @@ import java.util.List;
 /**
  * Built from the following format:
  * {
- *      "name": "wartortle",
- *      "url": "https://pokeapi.co/api/v2/pokemon/8/"
+ *      "results": [SimplePokemonModel, SimplePokemonModel, SimplePokemonModel]"
  * }
  */
 
-public class PokemonsWrapper {
+public class SimplePokemonsWrapper {
 
     @SerializedName("results")
     @Expose
     private List<SimplePokemonModel> pokemons;
-    @SerializedName("next")
-    @Expose
-    private String nextUrl;
 
     public List<SimplePokemonModel> getPokemons() {
         return pokemons;
-    }
-
-    public String getNextUrl() {
-        return nextUrl;
     }
 
 }

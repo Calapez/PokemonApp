@@ -1,4 +1,4 @@
-package pt.brunoponte.pokemon.models;
+package pt.brunoponte.pokemon.models.pokemon;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,13 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+/**
+ * Built from the following format:
+ * {
+ *      "name": "wartortle",
+ *      "url": "https://pokeapi.co/api/v2/pokemon/8/"
+ * }
+ */
 
 public class SimplePokemonModel implements Parcelable {
 
