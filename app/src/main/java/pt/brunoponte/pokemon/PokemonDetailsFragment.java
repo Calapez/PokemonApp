@@ -68,7 +68,7 @@ public class PokemonDetailsFragment extends Fragment {
         return instance;
     }
 
-    private PokemonDetailsFragment() {}
+    public PokemonDetailsFragment() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

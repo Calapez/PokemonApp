@@ -41,7 +41,7 @@ public class PokemonListFragment extends Fragment {
         return instance;
     }
 
-    private PokemonListFragment() {}
+    public PokemonListFragment() {}
 
     /* Scroll Listener for handling pagination with Recycler View */
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
