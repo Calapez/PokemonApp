@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import pt.brunoponte.pokemon.models.PokemonModel;
-import pt.brunoponte.pokemon.models.SimplePokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.PokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonModel;
 import pt.brunoponte.pokemon.network.ApiService;
 import pt.brunoponte.pokemon.network.RetrofitInstance;
 import retrofit2.Call;
@@ -22,10 +22,11 @@ public class PokemonDetailsViewModel extends ViewModel {
     private MutableLiveData<PokemonModel> mPokemon = new MutableLiveData<>();
 
     public void init(SimplePokemonModel simplePokemon) {
-        fetchPokemon(simplePokemon.getName());
+        fetchPokemonDetails(simplePokemon.getName());
     }
 
-    public void fetchPokemon(String name) {
+    // FIXME: This is just temporarily in ModelView
+    private void fetchPokemonDetails(String name) {
         ApiService apiService = RetrofitInstance.getInstance().create(ApiService.class);
         Call<PokemonModel> showPokemonsCall = apiService.showPokemon(name);
         showPokemonsCall.enqueue(new Callback<PokemonModel>() {
@@ -35,7 +36,6 @@ public class PokemonDetailsViewModel extends ViewModel {
                 Log.d(TAG, response.message());
 
                 mPokemon.setValue(response.body());
-
             }
 
             @Override

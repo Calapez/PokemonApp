@@ -16,7 +16,7 @@ import java.util.List;
 
 import pt.brunoponte.pokemon.MainActivity;
 import pt.brunoponte.pokemon.R;
-import pt.brunoponte.pokemon.models.SimplePokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonModel;
 import pt.brunoponte.pokemon.util.GeneralMethods;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHolder> {
@@ -65,6 +65,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
                 GeneralMethods.capitalizeFirstLetter(pokemon.getName())
         );
 
+        // Add pokemon photo to view in list
         if (pokemon.getPhotoUrl() != null && !pokemon.getPhotoUrl().isEmpty()) {
             addPhotoToImageView(pokemon.getPhotoUrl(), viewHolder.getImgView());
         }

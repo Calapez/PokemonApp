@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import pt.brunoponte.pokemon.models.SimplePokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonModel;
 import pt.brunoponte.pokemon.repositories.PokemonRepository;
 
 public class PokemonListViewModel extends ViewModel {

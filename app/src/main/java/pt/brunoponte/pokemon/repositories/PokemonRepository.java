@@ -3,15 +3,14 @@ package pt.brunoponte.pokemon.repositories;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.brunoponte.pokemon.models.PokemonModel;
-import pt.brunoponte.pokemon.models.PokemonsWrapper;
-import pt.brunoponte.pokemon.models.SimplePokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.PokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonsWrapper;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonModel;
 import pt.brunoponte.pokemon.network.ApiService;
 import pt.brunoponte.pokemon.network.RetrofitInstance;
 import retrofit2.Call;
@@ -24,7 +23,6 @@ public class PokemonRepository {
     private static PokemonRepository instance;
 
     private MutableLiveData<List<SimplePokemonModel>> mSimplePokemons;
-    private MutableLiveData<List<PokemonModel>> mPokemons;
     private MutableLiveData<Boolean> mIsFetching;
 
     public static PokemonRepository getInstance() {
@@ -38,9 +36,6 @@ public class PokemonRepository {
         mSimplePokemons = new MutableLiveData<>();
         mSimplePokemons.setValue(new ArrayList<>());
 
-        mPokemons = new MutableLiveData<>();
-        mPokemons.setValue(new ArrayList<>());
-
         mIsFetching = new MutableLiveData<>();
         mIsFetching.setValue(false);
     }
@@ -49,29 +44,27 @@ public class PokemonRepository {
         return mSimplePokemons;
     }
 
-    public MutableLiveData<List<PokemonModel>> getPokemons() {
-        return mPokemons;
-    }
-
     public MutableLiveData<Boolean> getIsFetching() {
         return mIsFetching;
     }
 
+    // Fetch pokemons from a given offset and with a given pageSize
     public void fetchMorePokemons(int offset, int pageSize) {
         mIsFetching.setValue(true);
 
         List<SimplePokemonModel> tempPokemons = mSimplePokemons.getValue();
 
+        // Fetch pokemons
         ApiService apiService = RetrofitInstance.getInstance().create(ApiService.class);
-        Call<PokemonsWrapper> listPokemonsCall = apiService.listPokemons(offset, pageSize);
-        listPokemonsCall.enqueue(new Callback<PokemonsWrapper>() {
+        Call<SimplePokemonsWrapper> listPokemonsCall = apiService.listPokemons(offset, pageSize);
+        listPokemonsCall.enqueue(new Callback<SimplePokemonsWrapper>() {
             @Override
-            public void onResponse(@NonNull Call<PokemonsWrapper> call,
-                                   @NonNull Response<PokemonsWrapper> response)
+            public void onResponse(@NonNull Call<SimplePokemonsWrapper> call,
+                                   @NonNull Response<SimplePokemonsWrapper> response)
             {
                 Log.d(TAG, "fetchMorePokemons() success");
 
-                PokemonsWrapper wrapper = response.body();
+                SimplePokemonsWrapper wrapper = response.body();
 
                 if (wrapper == null || wrapper.getPokemons() == null) {
                     return;
@@ -81,8 +74,7 @@ public class PokemonRepository {
                 for (SimplePokemonModel pokemon : wrapper.getPokemons()) {
                     tempPokemons.add(pokemon);
 
-                    /* Async request */
-                    Log.d(TAG, "showPokemon("+pokemon.getName()+")");
+                    // Must fetch pokemon details to get its photo url
                     ApiService apiService2 = RetrofitInstance.getInstance().create(ApiService.class);
                     Call<PokemonModel> showPokemonCall = apiService2.showPokemon(pokemon.getName());
                     showPokemonCall.enqueue(new Callback<PokemonModel>() {
@@ -112,7 +104,7 @@ public class PokemonRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<PokemonsWrapper> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<SimplePokemonsWrapper> call, @NonNull Throwable t) {
                 t.printStackTrace();
                 Log.d(TAG, "onFailure() listPokemons");
 

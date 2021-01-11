@@ -20,25 +20,25 @@ public class PokemonListFragment extends Fragment {
 
     private static final String TAG = PokemonListFragment.class.getSimpleName();
 
-    private static PokemonListFragment instance;
+    private static PokemonListFragment sInstance;
 
     private MainActivity mActivity;
     private PokemonListViewModel mPokemonListViewModel;
 
     /* Progress Bar*/
-    private ProgressBar progressBar;
+    private ProgressBar mProgressBar;
 
     /* Pokemon list */
-    private RecyclerView listPokemons;
+    private RecyclerView mListPokemons;
     private LinearLayoutManager mLayoutManager;
     private PokemonAdapter mAdapter;
 
     static PokemonListFragment getInstance() {
-        if (instance == null) {
-            instance = new PokemonListFragment();
+        if (sInstance == null) {
+            sInstance = new PokemonListFragment();
         }
 
-        return instance;
+        return sInstance;
     }
 
     public PokemonListFragment() {}
@@ -58,6 +58,7 @@ public class PokemonListFragment extends Fragment {
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
+            // Scrolled to the bottom, fetch more pokemons
             if (!mPokemonListViewModel.getIsFetching().getValue()
                     && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                     && firstVisibleItemPosition >= 0
@@ -84,7 +85,7 @@ public class PokemonListFragment extends Fragment {
         View viewRoot = (View) inflater.inflate(R.layout.pokemon_list_fragment, container, false);
 
         /* Progress bar */
-        progressBar = (ProgressBar) viewRoot.findViewById(R.id.progressBar);
+        mProgressBar = (ProgressBar) viewRoot.findViewById(R.id.progressBar);
 
         /* Recycler View */
         // Set adapter value
@@ -94,21 +95,25 @@ public class PokemonListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mActivity);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         // Set recycler view
-        listPokemons = (RecyclerView) viewRoot.findViewById(R.id.recyclerPokemon);
-        listPokemons.setLayoutManager(mLayoutManager);
-        listPokemons.setAdapter(mAdapter);
-        listPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
+        mListPokemons = (RecyclerView) viewRoot.findViewById(R.id.recyclerPokemon);
+        mListPokemons.setLayoutManager(mLayoutManager);
+        mListPokemons.setAdapter(mAdapter);
+        mListPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
 
+        setObservers();
+
+        mPokemonListViewModel.fetchMorePokemons();  // Fetch pokemons right away
+
+        return viewRoot;
+    }
+
+    private void setObservers() {
         mPokemonListViewModel.getSimplePokemons().observe(this, simplePokemons ->
                 mAdapter.notifyDataSetChanged()
         );
 
         mPokemonListViewModel.getIsFetching().observe(this, isLoading ->
-                progressBar.setVisibility( isLoading ? View.VISIBLE : View.INVISIBLE )
+                mProgressBar.setVisibility( isLoading ? View.VISIBLE : View.INVISIBLE )
         );
-
-        mPokemonListViewModel.fetchMorePokemons();
-
-        return viewRoot;
     }
 }

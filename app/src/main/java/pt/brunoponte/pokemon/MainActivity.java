@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import pt.brunoponte.pokemon.models.SimplePokemonModel;
+import pt.brunoponte.pokemon.models.pokemon.SimplePokemonModel;
 
 public class MainActivity extends AppCompatActivity {
 
