@@ -33,7 +33,7 @@ public class PokemonListFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
     private PokemonAdapter mAdapter;
 
-    public static PokemonListFragment getInstance() {
+    static PokemonListFragment getInstance() {
         if (instance == null) {
             instance = new PokemonListFragment();
         }
@@ -48,17 +48,23 @@ public class PokemonListFragment extends Fragment {
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
+
+            if (mPokemonListViewModel.getIsFetching() == null
+                    || mPokemonListViewModel.getIsFetching().getValue() == null) {
+                return;
+            }
+
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
-            if (!mPokemonListViewModel.getIsLoading().getValue() && !mPokemonListViewModel.getIsLastPage().getValue()) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                        && firstVisibleItemPosition >= 0
-                        && totalItemCount >= PokemonListViewModel.PAGE_SIZE) {
+            if (!mPokemonListViewModel.getIsFetching().getValue()
+                    && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0
+                    && totalItemCount >= PokemonListViewModel.PAGE_SIZE)
+            {
                     // Load new page of pokemons
                     mPokemonListViewModel.fetchMorePokemons();
-                }
             }
         }
     };
@@ -82,7 +88,8 @@ public class PokemonListFragment extends Fragment {
 
         /* Recycler View */
         // Set adapter value
-        mAdapter = new PokemonAdapter(mActivity, mPokemonListViewModel.getPokemons().getValue());
+        mAdapter = new PokemonAdapter(mActivity,
+                mPokemonListViewModel.getSimplePokemons().getValue());
         // Set layout manager
         mLayoutManager = new LinearLayoutManager(mActivity);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -92,11 +99,11 @@ public class PokemonListFragment extends Fragment {
         listPokemons.setAdapter(mAdapter);
         listPokemons.addOnScrollListener(recyclerViewOnScrollListener); // Pagination
 
-        mPokemonListViewModel.getPokemons().observe(this, pokemons ->
+        mPokemonListViewModel.getSimplePokemons().observe(this, simplePokemons ->
                 mAdapter.notifyDataSetChanged()
         );
 
-        mPokemonListViewModel.getIsLoading().observe(this, isLoading ->
+        mPokemonListViewModel.getIsFetching().observe(this, isLoading ->
                 progressBar.setVisibility( isLoading ? View.VISIBLE : View.INVISIBLE )
         );
 

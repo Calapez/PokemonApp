@@ -26,20 +26,20 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
     private MainActivity mActivity;
     private List<SimplePokemonModel> pokemonsList;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private final ImageView imgView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textName);
             imgView = itemView.findViewById(R.id.imgPhoto);
         }
 
-        public TextView getTextView() {
+        TextView getTextView() {
             return textView;
         }
-        public ImageView getImgView() {
+        ImageView getImgView() {
             return imgView;
         }
     }
@@ -80,11 +80,6 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.ViewHold
             return 0;
 
         return pokemonsList.size();
-    }
-
-    public void setPokemonsList(List<SimplePokemonModel> pokemonsList) {
-        this.pokemonsList = pokemonsList;
-        notifyDataSetChanged();
     }
 
     private void addPhotoToImageView(String url, ImageView imgView) {

@@ -1,7 +1,5 @@
 package pt.brunoponte.pokemon.network;
 
-import java.util.List;
-
 import pt.brunoponte.pokemon.models.PokemonModel;
 import pt.brunoponte.pokemon.models.PokemonsWrapper;
 import retrofit2.Call;
